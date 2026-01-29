@@ -47,7 +47,7 @@ int processInstruction(VMstate_t *vm) {
 			return 0;
 		}
 		case 0x28: {
-			vm->regs.pc = parse_i8(ram, vm->regs.pc + 1);
+			vm->regs.pc = parse_i8(vm->ram, vm->regs.pc + 1);
 			return 0;
 		}
 		default: {
