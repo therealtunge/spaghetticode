@@ -3,7 +3,7 @@
 #include <vm.h>
 #include <dexfile.h>
 #include <string.h>
-
+char *loadDexFile(FILE *fp, bool *okay, unsigned int *read, VMstate_t *vm);
 int main(int argc, char *argv[]) {
 	if (argc != 2) {
 		printf("wrong amount of args: %d, expected 1\n", argc-1);
@@ -22,22 +22,18 @@ int main(int argc, char *argv[]) {
 	fseek(fp, 0L, SEEK_SET); // rewind
 	
 	printf("loading file of %ld bytes...\n", sz);
+	unsigned int read = 0;
+	VMstate_t *vm = malloc(sizeof(VMstate_t));
 
-	header_item_t header;
-
-	fread(&header, sizeof(header_item_t), 1, fp);
-	if (header.endian_tag != 0x12345678) {
-		printf("good job\n");
-		return 1;
-	}
-	printf("dex v");
-	for (int i = 4; i < 8; i++) {
-		printf("%c", header.magic[i]);
-	}
-	printf("\n");
-	
-
-//	while (!processInstruction(&vm));
+	vm->methods = malloc(0);
+	vm->methodcount = 0;
+	vm->stack = malloc(0);
+	vm->stacksize = 0;
+	vm->ram = loadDexFile(fp, NULL, &read, vm);
+	vm->sp = 0; // sorry this guy has to be segregated because pc gets corrupted if i move it up there
+	vm->pc = 0; // this guy too
+	// c is strange
+	while (!processInstruction(vm));
 	// clean up...
 quit:
 	//free(vm.regs.buffer);
@@ -45,6 +41,7 @@ quit:
 	if (fp) {
 		fclose(fp);
 	}
-	
+	// for some absolutely UNGODLY reason it DIES if you uncomment these lines so DONT, thanks
+	//free(vm);
 	return 0;
 }

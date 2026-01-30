@@ -1,7 +1,8 @@
 #include <stdint.h>
 
 // DEX v37 READER
-
+// i know that v39 is the "gold" (google) standard and v41 is best
+// but everything i've seen is v37
 typedef struct {
 	uint8_t magic[8];
 	uint32_t checksum; // unused for now :D
@@ -40,17 +41,6 @@ typedef struct {
 } header_item_t;
 
 typedef struct {
-	uint32_t class_idx;
-	uint32_t access_flags;
-	uint32_t superclass_idx;
-	uint32_t interfaces_off;
-	uint32_t source_file_idx;
-	uint32_t annotations_off;
-	uint32_t class_data_off;
-	uint32_t static_values_off;
-} class_def_item_t;
-
-typedef struct {
 	uint32_t string_data_off;
 } string_id_item_t;
 
@@ -65,6 +55,17 @@ typedef struct {
 } proto_id_item_t;
 
 typedef struct {
+	uint32_t class_idx;
+	uint32_t access_flags;
+	uint32_t superclass_idx;
+	uint32_t interfaces_off;
+	uint32_t source_file_idx;
+	uint32_t annotations_off;
+	uint32_t class_data_off;
+	uint32_t static_values_off;
+} class_def_item_t;
+
+typedef struct {
 	uint16_t class_idx;
 	uint16_t type_idx;
 	uint32_t name_idx;
@@ -75,6 +76,37 @@ typedef struct {
 	uint16_t proto_idx;
 	uint32_t name_idx;
 } method_id_item_t;
+// i dont care if my uleb128 impl is wrong. shut up.
+typedef struct {
+	uint16_t field_idx_diff; // actually uleb128
+	uint16_t access_flags; // actually uleb128
+} encoded_field_t;
+
+typedef struct {
+	unsigned int method_idx_diff; // actually uleb128
+	unsigned int access_flags; // actually uleb128
+	unsigned int code_off; // actually uleb128
+} encoded_method_t;
+
+typedef struct {
+	unsigned int static_fields_size; // actually uleb128
+	unsigned int instance_fields_size; // actually uleb128
+	unsigned int direct_methods_size; // actually uleb128
+	unsigned int virtual_methods_size; // actually uleb128
+	encoded_field_t *static_fields;
+	encoded_field_t *instance_fields;
+	encoded_method_t *direct_methods;
+	encoded_method_t *virtual_methods;
+} class_data_item_t;
+
+typedef struct {
+	uint16_t registers_size;
+	uint16_t ins_size;
+	uint16_t outs_size;
+	uint16_t tries_size;
+	uint32_t debug_info_off;
+	uint32_t insns_size;
+} code_item_t;
 
 #define call_site_item_t assert(0); int // too lazy to define these lol
 #define method_handle_item_t assert(0); int
