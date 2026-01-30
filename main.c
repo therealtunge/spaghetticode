@@ -40,7 +40,7 @@ quit:
 	if (fp) {
 		fclose(fp);
 	}
-	// for some absolutely UNGODLY reason it DIES if you uncomment this line so DONT, thanks
-	//free(vm);
+	// actually nvm
+	free(vm);
 	return 0;
 }
