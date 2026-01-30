@@ -30,9 +30,8 @@ int main(int argc, char *argv[]) {
 	vm->stack = malloc(0);
 	vm->stacksize = 0;
 	vm->ram = loadDexFile(fp, NULL, &read, vm);
-	vm->sp = 0; // sorry this guy has to be segregated because pc gets corrupted if i move it up there
-	vm->pc = 0; // this guy too
-	// c is strange
+	vm->sp = 0;
+	vm->pc = 0;
 	while (!processInstruction(vm));
 	// clean up...
 quit:
@@ -41,7 +40,7 @@ quit:
 	if (fp) {
 		fclose(fp);
 	}
-	// for some absolutely UNGODLY reason it DIES if you uncomment these lines so DONT, thanks
+	// for some absolutely UNGODLY reason it DIES if you uncomment this line so DONT, thanks
 	//free(vm);
 	return 0;
 }
