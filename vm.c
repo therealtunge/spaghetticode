@@ -3,29 +3,29 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-uint32_t parse_u32(void *ram, unsigned int ptr) {
+static inline uint32_t parse_u32(void *ram, unsigned int ptr) {
 	return *((unsigned int*) (ram + ptr));
 }
 
-char *parse_pointer(void *ram, unsigned int ptr) {
+static inline char *parse_pointer(void *ram, unsigned int ptr) {
 	int p = *((unsigned int*) (ram + ptr));
 	return ram + p;
 }
 
-int8_t parse_i8(void *ram, unsigned int ptr) {
+static inline int8_t parse_i8(void *ram, unsigned int ptr) {
 	return *((int8_t*) (ram + ptr));
 }
 
-uint16_t parse_u16(void *ram, unsigned int ptr) {
+static inline uint16_t parse_u16(void *ram, unsigned int ptr) {
 	return *((uint16_t*) (ram + ptr));
 }
 
-int16_t parse_i16(void *ram, unsigned int ptr) {
+static inline int16_t parse_i16(void *ram, unsigned int ptr) {
 	return *((int16_t*) (ram + ptr));
 }
 
 
-void write_u32(void *ram, unsigned int ptr, uint32_t value) {
+static inline void write_u32(void *ram, unsigned int ptr, uint32_t value) {
 //	printf("%d ADBBS ADBSABA\n", value);
 	*((unsigned int *)(ram)) = value;
 }
@@ -73,7 +73,7 @@ bool is_address_method(VMstate_t *vm, unsigned int addr) {
 }
 
 int processInstruction(VMstate_t *vm) {
-	//printf("pc = %d\n", vm->pc);
+	printf("pc = %d\n", vm->pc);
 	if (vm->pc == 0) {
 		for (int i = 0; i <= vm->methodcount; i++) {
 
@@ -84,7 +84,7 @@ int processInstruction(VMstate_t *vm) {
 		}
 	}
 	
-	if (vm->pc % 4 == 0) {
+	if (true) {
 		if (is_address_method(vm, vm->pc)) {
 			//printf("METHOD JUMP!\n");
 			
@@ -100,6 +100,7 @@ int processInstruction(VMstate_t *vm) {
 	
 	switch (vm->ram[vm->pc]) {
 		case 0x00: {
+			printf("AAAAAA\n");
 			vm->pc += 2;
 			return 0;
 		}
@@ -110,6 +111,7 @@ int processInstruction(VMstate_t *vm) {
 		}
 		case 0x0f: {
 			vm->result = vm->regstack[(int)vm->ram[vm->pc+1] + vm->register_offset];
+
 			if (vm->callsp == 0) {
 				printf("main() returned exit code %d\n", vm->result);
 				exit(vm->result);
@@ -122,7 +124,7 @@ int processInstruction(VMstate_t *vm) {
 			
 			printf("RETURN %d\n", vm->result);
 			
-			//printf("ABBBB %d\n", vm->pc);
+			printf("ABBBB %d\n", vm->pc);
 			return 0;
 		}
 		case 0x12: {
@@ -144,7 +146,7 @@ int processInstruction(VMstate_t *vm) {
 			return 0;
 		}
 		case 0x71: {
-			//printf("AaA %d, %d\n", vm->methods[parse_u16(vm->ram, vm->pc + 2)].address, vm->pc + 4);
+			printf("AaA %d, %d\n", vm->methods[parse_u16(vm->ram, vm->pc + 2)].address, vm->pc + 4);
 			push_u32(vm, vm->pc+4);
 			vm->pc = vm->methods[parse_u16(vm->ram, vm->pc + 2)].address;
 			return 0;
