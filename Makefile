@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -O0 -Iinclude -Werror -g -std=c23
+CFLAGS := -Wall -O0 -Iinclude -Werror -g -std=c2x
 SRCS := $(wildcard *.c) $(wildcard */*.c)
 OBJS := $(SRCS:.c=.o)
 EXEC := vm
