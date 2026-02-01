@@ -1,5 +1,7 @@
 #include <stdint.h>
-
+#include <stdio.h>
+#include <stddef.h>
+#include <vm.h>
 // DEX v37 READER
 // i know that v39 is the "gold" (google) standard and v41 is best
 // but everything i've seen is v37
@@ -110,3 +112,4 @@ typedef struct {
 
 #define call_site_item_t assert(0); int // too lazy to define these lol
 #define method_handle_item_t assert(0); int
+unsigned char *loadDexFile(FILE *fp, bool *okay, unsigned int *read, VMstate_t *vm);

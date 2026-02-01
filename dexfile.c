@@ -1,7 +1,7 @@
 #include <dexfile.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <vm.h>
+
 #include <string.h>
 
 static inline int readuLEB128(FILE *fp) {
@@ -53,12 +53,12 @@ static char *getString(FILE *fp, unsigned int id, header_item_t header, unsigned
 	return string;
 }
 
-char *loadDexFile(FILE *fp, bool *okay, unsigned int *read, VMstate_t *vm) {
+unsigned char *loadDexFile(FILE *fp, bool *okay, unsigned int *read, VMstate_t *vm) {
 	header_item_t header;
 	class_def_item_t class;
 	class_data_item_t class_data;
 	method_id_item_t *methods;
-	char *ram = malloc(0);
+	unsigned char *ram = malloc(0);
 	unsigned int ram_size = 0;
 	unsigned int ram_cur = 0;
 	fread(&header, sizeof(header_item_t), 1, fp);

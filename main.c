@@ -3,7 +3,7 @@
 #include <vm.h>
 #include <dexfile.h>
 #include <string.h>
-char *loadDexFile(FILE *fp, bool *okay, unsigned int *read, VMstate_t *vm);
+
 int main(int argc, char *argv[]) {
 	if (argc != 2) {
 		printf("wrong amount of args: %d, expected 1\n", argc-1);
