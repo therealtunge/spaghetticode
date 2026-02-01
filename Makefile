@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -O0 -Iinclude -Werror -g
+CFLAGS := -Wall -O0 -Iinclude -Werror -g -std=c23
 SRCS := $(wildcard *.c) $(wildcard */*.c)
 OBJS := $(SRCS:.c=.o)
 EXEC := vm
@@ -15,5 +15,9 @@ $(EXEC): $(OBJS)
 clean:
 	rm -f $(OBJS) $(EXEC)
 
-.PHONY: all clean
+java:
+	javac example.java
+	~/Android/Sdk/build-tools/36.1.0/d8 example.class
+
+.PHONY: all clean java
 

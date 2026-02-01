@@ -30,9 +30,10 @@ static void loadEncodedMethod(FILE *fp, encoded_method_t *em) {
 }
 
 static char *getString(FILE *fp, unsigned int id, header_item_t header, unsigned int *_len) {
+	
 	uint32_t string_id;
 	unsigned int len;
-	char *string;
+	
 	unsigned int orig = ftell(fp);
 
 	fseek(fp, header.string_ids_off + (id * 4), SEEK_SET);
@@ -40,13 +41,15 @@ static char *getString(FILE *fp, unsigned int id, header_item_t header, unsigned
 	fseek(fp, string_id, SEEK_SET);
 
 	len = readuLEB128(fp);
+	char *string;
 	string = malloc(len);
-
+	string[len] = 0;
 	fread(string, len, 1, fp);
 	fseek(fp, orig, SEEK_SET);
 	if (_len) {
 		*_len = len;
 	}
+
 	return string;
 }
 
@@ -60,7 +63,7 @@ char *loadDexFile(FILE *fp, bool *okay, unsigned int *read, VMstate_t *vm) {
 	unsigned int ram_cur = 0;
 	fread(&header, sizeof(header_item_t), 1, fp);
 
-	methods = malloc(header.method_ids_size);
+	methods = malloc(header.method_ids_size * sizeof(method_id_item_t));
 	fseek(fp, header.method_ids_off, SEEK_SET);
 	fread(methods, sizeof(method_id_item_t), header.method_ids_size, fp);
 
@@ -84,7 +87,6 @@ char *loadDexFile(FILE *fp, bool *okay, unsigned int *read, VMstate_t *vm) {
 	class_data.direct_methods = calloc(class_data.direct_methods_size, sizeof(encoded_method_t));
 	unsigned int cur_method = 0;
 	code_item_t code_item;
-	char *temp;
 	unsigned int len;
 	printf("loading %d direct methods\n", class_data.direct_methods_size);
 	for (int i = 0; i < class_data.direct_methods_size; i++) {
@@ -106,11 +108,9 @@ char *loadDexFile(FILE *fp, bool *okay, unsigned int *read, VMstate_t *vm) {
 		vm->methods = realloc(vm->methods, (vm->methodcount + 1) * sizeof(method_t));
 		
 		string = getString(fp, methods[cur_method].name_idx, header, &len);
-		temp = malloc(len);
-	
-		strcpy(temp, string);
 
-		vm->methods[vm->methodcount].name = temp;
+
+		vm->methods[vm->methodcount].name = strdup(string);
 		vm->methods[vm->methodcount].address = ram_cur;
 		vm->methodcount++;
 		printf("loaded direct method %d \"%s\"\n", cur_method, string);

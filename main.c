@@ -27,10 +27,13 @@ int main(int argc, char *argv[]) {
 
 	vm->methods = malloc(0);
 	vm->methodcount = 0;
-	vm->stack = malloc(0);
-	vm->stacksize = 0;
+	vm->callstack = malloc(0);
+	vm->callstacksize = 0;
+	vm->regstack = malloc(0);
+	vm->regstacksize = 0;
 	vm->ram = loadDexFile(fp, NULL, &read, vm);
-	vm->sp = 0;
+	vm->callsp = 0;
+	vm->regsp = 0;
 	vm->pc = 0;
 	while (!processInstruction(vm));
 	// clean up...
